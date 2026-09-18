@@ -1,0 +1,21 @@
+<?php
+
+return [
+    'item_options' => [
+        '08164833821 (MICHAEL LOANDOUW)',
+        '08151923504 (CATUR)',
+        '081585338594 (FURQON)',
+        '081519999714 (WRDIONO)',
+        '081519999715 (FERRY)',
+        '081511393425 (M. NURZAIN)',
+        '081511395775 (WINARNO)',
+        '081511395756 (WAHYU ADHIE S)',
+        '081585267019 (NUUBERTUS)',
+        '081585267105 (TS 02)',
+        '081585267103 (TS 01)',
+        '08118443200 (RIKU IMAI)',
+        '0811161086 (MR. SATO KATSUYUKI)',
+        '081292038071 (MR HASIMOTO)',
+        '0811825417 (MR HIROFUMI UMETANI)',
+    ],
+];

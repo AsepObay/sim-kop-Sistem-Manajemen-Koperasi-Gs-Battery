@@ -1,0 +1,540 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<!-- [Head] start -->
+
+<head>
+  <title>Login | Sim-Kop</title>
+  <!-- [Meta] -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Mantis is made using Bootstrap 5 design framework. Download the free admin template & use it for your project.">
+  <meta name="keywords" content="Mantis, Dashboard UI Kit, Bootstrap 5, Admin Template, Admin Dashboard, CRM, CMS, Bootstrap Admin Template">
+  <meta name="author" content="CodedThemes">
+
+  <!-- [Favicon] icon -->
+  <link rel="icon" href="{{ asset('assets/images/sim.png') }}" type="image/png"> <!-- [Google Font] Family -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" id="main-font-link">
+<link rel="stylesheet" href="../assets/fonts/tabler-icons.min.css" >
+<link rel="stylesheet" href="../assets/fonts/feather.css" >
+<link rel="stylesheet" href="../assets/fonts/fontawesome.css" >
+<link rel="stylesheet" href="../assets/fonts/material.css" >
+<link rel="stylesheet" href="../assets/css/style.css" id="main-style-link" >
+<link rel="stylesheet" href="../assets/css/style-preset.css" >
+
+</head>
+<!-- [Head] end -->
+<!-- [Body] Start -->
+
+<body>
+  @php
+    $activeBg = null;
+    if (\Illuminate\Support\Facades\Schema::hasTable('login_backgrounds')) {
+        try {
+            $activeBg = \App\Models\LoginBackground::where('is_active', true)->first();
+        } catch (\Throwable $e) {
+            $activeBg = null;
+        }
+    }
+  @endphp
+
+  @if($activeBg && $activeBg->type === 'video' && $activeBg->file_path)
+    <video class="login-bg-video" autoplay muted loop playsinline poster="{{ asset('assets/images/sim.png') }}">
+      <source src="{{ Storage::url($activeBg->file_path) }}" type="video/mp4">
+    </video>
+  @elseif($activeBg && $activeBg->type === 'image' && $activeBg->file_path)
+    <div class="login-bg-image" style="position:fixed; inset:0; background-image:url('{{ Storage::url($activeBg->file_path) }}'); background-size:cover; background-position:center; z-index:0;"></div>
+  @else
+    <video class="login-bg-video" autoplay muted loop playsinline poster="{{ asset('assets/images/sim.png') }}">
+      <source src="{{ asset('assets/images/Kemerdekaan.mp4') }}" type="video/mp4">
+    </video>
+  @endif
+
+  <div class="login-bg-overlay"></div>
+
+  <div class="login-loading" id="loginLoading" aria-hidden="true">
+    <div class="login-loading-panel">
+      <span class="login-loading-spinner" aria-hidden="true"></span>
+      <p>Memproses login...</p>
+    </div>
+  </div>
+
+  <div class="auth-main">
+    <div class="auth-wrapper v3">
+      <div class="auth-form">
+        <div class="card my-5 login-card">
+          <div class="card-body">
+            <div class="text-center mb-3">
+              <a href="#" class="d-inline-block simkop-logo-wrap"><img src="../assets/images/sim.png" alt="img" class="simkop-logo"></a>
+            </div>
+            <div class="text-center mb-3 login-header-wrap">
+              <h1 class="login-heading">Login</h1>
+              <p class="login-subtitle">Masuk ke Sistem Informasi Manajemen Koperasi</p>
+              <div class="login-accent" aria-hidden="true"></div>
+            </div>
+            <div class="alert alert-info mb-3" role="alert">
+              <div class="d-flex align-items-start gap-2">
+                <i class="ti ti-info-circle flex-shrink-0 mt-1"></i>
+                <div>
+                  <strong>Demo Credentials:</strong>
+                  <div class="small mt-1">
+                    <div><strong>Username:</strong> demo</div>
+                    <div><strong>Password:</strong> demo</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            @if($errors->any())
+              <div class="alert alert-danger">
+                {{ $errors->first('login') ?? 'Login gagal. Silakan cek kembali.' }}
+              </div>
+            @endif
+            <form method="POST" action="{{ route('login.post') }}" id="loginForm">
+              @csrf
+              <div class="form-group mb-3">
+                <label class="form-label">Username / Email</label>
+                <input type="text" name="username" class="form-control custom-input" placeholder="Masukan Username" value="{{ old('username') }}" required>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label">Password</label>
+                <div class="input-group password-group">
+                  <input type="password" id="passwordInput" name="password" class="form-control custom-input" placeholder="Password" required>
+                  <button class="btn password-toggle" type="button" id="togglePassword" aria-label="Lihat password">
+                    <i class="ti ti-eye" id="togglePasswordIcon"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="d-flex mt-1 justify-content-between">
+                <div class="form-check">
+                  <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" name="remember" {{ old('remember', true) ? 'checked' : '' }}>
+                  <label class="form-check-label text-muted" for="customCheckc1">Keep me sign in</label>
+                </div>
+              </div>
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn login-button">Login</button>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-4">
+                <div class="d-grid">
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="d-grid">
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="d-grid">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="auth-footer row">
+          <!-- <div class=""> -->
+            <div class="col my-1">
+              <p class="m-0">Copyright Â© <a href="#">Asep Obay Badilah</a></p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- [ Main Content ] end -->
+  <!-- Required Js -->
+  <style>
+    html, body {
+      margin: 0;
+      min-height: 100vh;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Public Sans", sans-serif;
+      background: linear-gradient(135deg, rgba(157, 35, 35, 0.75), rgba(24, 24, 24, 0.55));
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background-color: #111827;
+    }
+
+    .login-bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      display: block;
+      opacity: 1;
+      filter: none;
+      backdrop-filter: none;
+      transform: none;
+      background: transparent;
+    }
+
+    .login-bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    .auth-main {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .auth-wrapper.v3 {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-form {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 430px);
+    }
+
+    .auth-main .auth-wrapper.v3 .auth-form:after {
+      display: none !important;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      filter: none !important;
+      content: none !important;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+    }
+
+    .login-card .card-body {
+      padding: 32px;
+    }
+
+    .login-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.42);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 180ms ease, visibility 180ms ease;
+    }
+
+    .login-loading.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
+    }
+
+    .login-loading-panel {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 22px 28px;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.2);
+      color: #1f2937;
+    }
+
+    .login-loading-panel p {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .login-loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #dbeafe;
+      border-right-color: transparent;
+      border-bottom-color: #2563eb;
+      border-radius: 50%;
+      animation: login-spin 800ms linear infinite;
+    }
+
+    @keyframes login-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Logo */
+    .simkop-logo {
+      width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto 6px;
+      image-rendering: -webkit-optimize-contrast;
+    }
+
+    /* Header */
+    .login-heading {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      color: #1F2937;
+      line-height: 1;
+    }
+
+    .login-subtitle {
+      margin: 8px 0 6px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+
+    .login-accent {
+      width: 56px;
+      height: 4px;
+      background: #DC2626;
+      border-radius: 4px;
+      margin: 6px auto 0;
+      opacity: 0.95;
+    }
+
+    /* Inputs */
+    .custom-input {
+      height: 46px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #E6EEF6;
+      padding: 0 14px;
+      box-shadow: none;
+      font-size: 15px;
+      color: #111827;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .custom-input:focus {
+      border-color: #2563EB;
+      box-shadow: 0 6px 18px rgba(37,99,235,0.06);
+      outline: none;
+    }
+
+    .password-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .password-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid #D9E0EA;
+      background: transparent;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    .password-toggle:hover {
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* Checkbox */
+    .form-check-input {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid #D9E0EA;
+      background: #fff;
+      margin-top: 2px;
+      vertical-align: middle;
+    }
+
+    .form-check-input:checked {
+      background-color: #2563EB;
+      border-color: #2563EB;
+    }
+
+    .form-check-label {
+      margin-left: 8px;
+      color: #6B7280;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    /* Login button */
+    .login-button {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #38bdf8 0%, #2563eb 45%, #1d4ed8 100%);
+      border-radius: 10px;
+      height: 48px;
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .login-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.9s ease;
+      pointer-events: none;
+    }
+
+    .login-button:hover::before {
+      left: 120%;
+    }
+
+    /* subtle glossy on hover */
+    .login-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      opacity: 0;
+      transition: opacity 220ms ease;
+      pointer-events: none;
+    }
+
+    .login-button:hover::after {
+      opacity: 1;
+    }
+
+    .login-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.16);
+    }
+
+    /* Spacing adjustments */
+    .login-header-wrap { padding-bottom: 6px; }
+
+    @media (max-width: 768px) {
+      .auth-form { width: min(100%, 92vw); }
+      .login-card .card-body { padding: 24px; }
+      .simkop-logo { width: 120px; }
+    }
+
+    @media (max-width: 420px) {
+      .auth-form { width: calc(100% - 24px); }
+      .login-card .card-body { padding: 20px; }
+      .simkop-logo { width: 110px; }
+    }
+
+    .auth-footer {
+      position: relative;
+      z-index: 2;
+      margin-top: 12px;
+      color: #f8fafc;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    .auth-footer a {
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      html, body {
+        overflow: auto;
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      .auth-main {
+        padding: 16px;
+      }
+
+      .auth-form {
+        width: min(100%, 92vw);
+      }
+
+      .login-card {
+        border-radius: 18px;
+      }
+    }
+  </style>
+
+  <script src="{{ asset('assets/js/plugins/popper.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugins/simplebar.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/js/fonts/custom-font.js') }}"></script>
+  <script src="{{ asset('assets/js/pcoded.js') }}"></script>
+  <script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
+  <script>change_box_container('false');</script>
+
+
+
+  <script>layout_rtl_change('false');</script>
+  <script>font_change("Public-Sans");</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const passwordInput = document.getElementById('passwordInput');
+      const togglePassword = document.getElementById('togglePassword');
+      const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+      const loginForm = document.getElementById('loginForm');
+      const loginLoading = document.getElementById('loginLoading');
+
+      if (!passwordInput || !togglePassword || !togglePasswordIcon) {
+        return;
+      }
+
+      togglePassword.addEventListener('click', function () {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        togglePasswordIcon.className = isPassword ? 'ti ti-eye-off' : 'ti ti-eye';
+      });
+
+      if (loginForm && loginLoading) {
+        loginForm.addEventListener('submit', function (event) {
+          if (!loginForm.checkValidity()) {
+            return;
+          }
+
+          loginLoading.classList.add('is-visible');
+          loginLoading.setAttribute('aria-hidden', 'false');
+          loginForm.querySelector('button[type="submit"]').disabled = true;
+        });
+      }
+    });
+  </script>
+
+
+
+</body>
+<!-- [Body] end -->
+
+</html>
+
+

@@ -1,0 +1,97 @@
+%% Super Admin & Admin Flow - Mermaid
+%% Save as .mmd and render with mermaid-cli (mmdc) or VS Code Mermaid preview
+
+flowchart LR
+  %% Super Admin lane
+  subgraph SA[Super Admin]
+    SA_Login([Login])
+    SA_Dashboard([Dashboard])
+    SA_Users([Manage Users])
+    SA_Settings([Settings])
+    SA_Profile([View / Update Profile])
+    SA_Logout([Logout])
+  end
+
+  %% Admin lane
+  subgraph A[Admin]
+    A_Login([Login])
+    A_Dashboard([Dashboard])
+    A_PO([Purchase Orders])
+    A_PO_Create([Create PO])
+    A_PO_List([List PO])
+    A_PO_Close([Close PO])
+
+    A_Invoices([Invoices])
+    A_Inv_Create_PO([Create Invoice - PO])
+    A_Inv_Create_NonPO([Create Invoice - Non PO])
+    A_Inv_List([List Invoices])
+    A_Inv_View([View Invoice])
+    A_Inv_Download([Download PDF])
+    A_Inv_Delete([Delete Invoice])
+
+    A_Reports([Laporan / Reports])
+    A_Report_PO([Rekap PO])
+    A_Report_NonPO([Rekap Non PO])
+
+    A_Messages([Messages / Chattingan])
+    A_Msg_List([Admin Messages List])
+    A_Msg_Chat([Chat with User])
+
+    A_Profile([View / Update Profile])
+    A_Logout([Logout])
+  end
+
+  %% Auth flow (shared)
+  SA_Login -->|auth| SA_Dashboard
+  SA_Dashboard --> SA_Users
+  SA_Dashboard --> SA_Settings
+  SA_Dashboard --> SA_Profile
+  SA_Dashboard --> SA_Logout
+
+  A_Login -->|auth| A_Dashboard
+  A_Dashboard --> A_PO
+  A_Dashboard --> A_Invoices
+  A_Dashboard --> A_Reports
+  A_Dashboard --> A_Messages
+  A_Dashboard --> A_Profile
+  A_Dashboard --> A_Logout
+
+  %% PO details
+  A_PO --> A_PO_Create
+  A_PO --> A_PO_List
+  A_PO_List --> A_PO_Close
+
+  %% Invoices details
+  A_Invoices --> A_Inv_Create_PO
+  A_Invoices --> A_Inv_Create_NonPO
+  A_Invoices --> A_Inv_List
+  A_Inv_List --> A_Inv_View
+  A_Inv_View --> A_Inv_Download
+  A_Inv_View --> A_Inv_Delete
+
+  %% Reports details
+  A_Reports --> A_Report_PO
+  A_Reports --> A_Report_NonPO
+
+  %% Messages/Chat
+  A_Messages --> A_Msg_List
+  A_Msg_List --> A_Msg_Chat
+
+  %% Role capabilities (notes)
+  note_sa["SUPER_ADMIN: can access Users & Settings + all Admin features"]
+  note_sa -.-> SA_Users
+  note_sa -.-> SA_Settings
+  note_sa -.-> SA_Dashboard
+
+  note_admin["ADMIN: can manage PO, Invoices, Reports, Messages, Profile"]
+  note_admin -.-> A_Dashboard
+
+  %% Cross-links: Super Admin can also access Admin dashboards
+  SA_Dashboard -->|also access| A_PO
+  SA_Dashboard --> A_Invoices
+  SA_Dashboard --> A_Reports
+  SA_Dashboard --> A_Messages
+
+  style SA fill:#eef6ff,stroke:#6aa0ff
+  style A fill:#fff7ea,stroke:#ffb84d
+
